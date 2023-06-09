@@ -1,0 +1,100 @@
+/*
+Time Complexity: O(n)
+Space Complexity: O(n) where n=no. of string in the list
+
+For giving input, 
+either (i) comment all code in main() and only pass hardcoded values in function findKLongestConsecutiveStrings()
+Eg. cout<<findKLongestConsecutiveStrings({ "zone", "abigal", "dsfasf","efsdf" }, 2) -> prints the result
+or
+
+2 (no. of testcases)
+6 2 (inputlength, k)
+tree foling trashy blue abcdef uvwxyz (strarr -> inputlength no. of strings)
+8 2 (inputlength, k)
+zone abigail theta form libe zas theta abigail (strarr)
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+
+string findKLongestConsecutiveStrings(vector<string> strList, int k)
+{
+    //noOfStrings -> total no. of strings in the given list
+    int noOfStrings = strList.size();
+    
+    //edge cases
+    if(k<=0 || k>noOfStrings || noOfStrings==0) return "";
+    
+    int index = 0, startIndex=0, maxLength=0, lengthOfKStrings=0;
+    string result="";
+    vector<int> charCount(noOfStrings,0);
+    
+    //first calculate the length of each string in the list and store the lengths in charCount
+    for(int i=0;i<noOfStrings;i++) charCount[i]=strList[i].length();
+
+    //calculate the first K strings length
+    for(int i=0;i<k;i++) lengthOfKStrings+=charCount[i];
+    
+    //maxLength -> maximum length of K consecutive strings in the list
+    maxLength = lengthOfKStrings;
+    
+    //Used sliding window algo and starting from 0th index, we calculate the length of K strings in each iteration and update maxLength.
+    //index -> index from which K strings were considered
+    //startIndex -> index at which we are getting maxLength of K consecutive strings
+    for(int i=k;i<noOfStrings;i++) {
+        lengthOfKStrings = (lengthOfKStrings - charCount[index++] + charCount[i]);
+        if(maxLength < lengthOfKStrings)
+        {
+            maxLength = lengthOfKStrings;
+            startIndex = index;
+        }
+    }
+    
+    //starting from startIndex, append all the K strings and return the final "result"
+    for(int i=startIndex;i<k+startIndex;i++) result+=strList[i];
+    
+    return result;
+}
+
+int main()
+{
+    int testcases, inputLength, k;
+    cin>>testcases;
+    
+    while(testcases--)
+    {
+        cin>>inputLength>>k;
+        vector<string> strarr(inputLength);
+        cout<<"Enter "<<inputLength<<" strings now"<<endl;
+        for(int i=0;i<inputLength;i++) 
+        {
+            string str;
+            cin>>str;
+            strarr[i]=str;
+        }
+        
+        cout<<findKLongestConsecutiveStrings(strarr, k);
+    }
+}
+
+
+/*
+Few test cases
+Input:  strarr=["tree", "foling", "trashy", "blue", "abcdef", "uvwxyz"], k = 2
+Output: folingtrashy
+
+Input: strarr=["zone", "abigail", "theta", "form", "libe", "zas", "theta", "abigail"], k=2
+Output: abigailtheta
+
+Input: strarr=["abc","def","efg"], k=5
+Output: ""
+
+Input: strarr=["abc","def","ghi","jkl"], k=4
+Output: abcdefghijkl
+
+Input: strarr=[], k=0
+Output: ""
+
+Input: strarr=["abc","def"], k=-1
+Output: ""
+*/
